@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Games & Tools List</title>
+    <link rel="icon" href="assets/logo.png">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f5f7ff;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            height: 80px;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 30px auto;
+        }
+        
+        #search {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        #game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .game-thumbnail {
+            width: 100%;
+            height: 180px;
+            background-color: #e9ecef;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .game-content {
+            padding: 20px;
+        }
+        
+        .game-title {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+        
+        .game-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+        
+        .play-btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            #game-list {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="assets/logo.png" alt="网站Logo" class="logo">
+        <h1>My Games & Tools List</h1>
+        <p class="subtitle">分享我创作与收集的html游戏与工具</p>
+    </header>
+    
+    <div class="search-container">
+        <input type="text" id="search" placeholder="搜索..." aria-label="搜索">
+    </div>
+    
+    <div id="game-list" class="game-list">
+        <!-- 卡片将通过JS动态生成 -->
+    </div>
+    
+    <footer>
+        <p>© 2025 My Games & Tools List | [ Af ] Afingpo</p>
+    </footer>
+
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取基本URL路径
+            const baseUrl = window.location.origin + 
+                            (window.location.pathname.split('/').slice(0, -1).join('/') || '') + '/';
+            
+            const gameList = document.getElementById('game-list');
+            const searchInput = document.getElementById('search');
+            
+            // 加载并显示文件列表
+            const loadGames = async () => {
+                try {
+                    // 尝试从manifest加载数据
+                    const response = await fetch(`${baseUrl}game-manifest.json`);
+                    if (!response.ok) throw new Error('Manifest加载失败');
+                    
+                    const games = await response.json();
+                    renderGames(games);
+                    
+                } catch (error) {
+                    console.error('使用manifest加载失败，尝试目录扫描:', error);
+                    try {
+                        // 后备方案：尝试扫描src目录
+                        const dirResponse = await fetch(`${baseUrl}src/`);
+                        if (!dirResponse.ok) throw new Error('目录扫描失败');
+                        
+                        const dirHtml = await dirResponse.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(dirHtml, 'text/html');
+                        const links = [...doc.querySelectorAll('a[href$=".html"]')];
+                        
+                        const games = links.map(link => ({
+                            name: link.textContent.replace('.html', ''),
+                            file: link.href.split('/').pop(),
+                            description: '点击打开'
+                        }));
+                        
+                        renderGames(games);
+                        
+                    } catch (dirError) {
+                        console.error('目录扫描失败:', dirError);
+                        gameList.innerHTML = `
+                            <div class="empty-state">
+                                <h3>无法加载文件列表</h3>
+                                <p>请检查game-manifest.json文件配置或服务器设置</p>
+                            </div>
+                        `;
+                    }
+                }
+            };
+            
+            // 渲染文件列表到页面
+            const renderGames = (games) => {
+                if (games.length === 0) {
+                    gameList.innerHTML = `
+                        <div class="empty-state">
+                            <h3>暂无文件</h3>
+                            <p>请将HTML文件放入src目录</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // 按文件名称排序
+                games.sort((a, b) => a.name.localeCompare(b.name));
+                
+                gameList.innerHTML = games.map(game => `
+                    <a href="${baseUrl}src/${game.file}" class="game-card">
+                        <div class="game-thumbnail" 
+                             style="background-image: url('${game.thumbnail || 'assets/default-thumb.jpg'}')">
+                        </div>
+                        <div class="game-content">
+                            <h3 class="game-title">${game.name}</h3>
+                            <p class="game-description">${game.description || '点击打开'}</p>
+                            <span class="play-btn">开始</span>
+                        </div>
+                    </a>
+                `).join('');
+                
+                // 设置搜索功能
+                setupSearch(games);
+            };
+            
+            // 设置搜索功能
+            const setupSearch = (games) => {
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase().trim();
+                    
+                    document.querySelectorAll('.game-card').forEach((card, index) => {
+                        const game = games[index];
+                        const shouldShow = term === '' || 
+                                            game.name.toLowerCase().includes(term) || 
+                                            (game.description && game.description.toLowerCase().includes(term));
+                        card.style.display = shouldShow ? 'block' : 'none';
+                    });
+                });
+            };
+            
+            // 初始化加载
+            loadGames();
+        });
+    </script>
+</body>
+</html>
