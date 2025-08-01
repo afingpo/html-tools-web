@@ -241,18 +241,20 @@
                 // 按文件名称排序
                 games.sort((a, b) => a.name.localeCompare(b.name));
                 
-                gameList.innerHTML = games.map(game => `
-                    <a href="${baseUrl}src/${game.file}" class="game-card">
+                gameList。innerHTML = games.map(game => `
+                    <a href="${baseUrl}src/${game。file}" class="game-card">
+                        <!--
                         <div class="game-thumbnail" 
-                             style="background-image: url('${game.thumbnail || 'assets/default-thumb.jpg'}')">
+                             style="background-image: url('${game。thumbnail || 'assets/default-thumb.jpg'}')">
                         </div>
+                        -->
                         <div class="game-content">
-                            <h3 class="game-title">${game.name}</h3>
-                            <p class="game-description">${game.description || '点击打开'}</p>
+                            <h3 class="game-title">${game。name}</h3>
+                            <p class="game-description">${game。description || '点击打开'}</p>
                             <span class="play-btn">开始</span>
                         </div>
                     </a>
-                `).join('');
+                `)。join('');
                 
                 // 设置搜索功能
                 setupSearch(games);
@@ -263,7 +265,7 @@
                 searchInput.addEventListener('input', (e) => {
                     const term = e.target.value.toLowerCase().trim();
                     
-                    document.querySelectorAll('.game-card').forEach((card, index) => {
+                    document.querySelectorAll('.game-card')。forEach((card, index) => {
                         const game = games[index];
                         const shouldShow = term === '' || 
                                             game.name.toLowerCase().includes(term) || 
