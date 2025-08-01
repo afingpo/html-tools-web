@@ -79,23 +79,23 @@
             margin-top: 20px;
         }
         
-        .game-card {
+        。game-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s， box-shadow 0.3s;
             text-decoration: none;
             color: inherit;
             display: block;
         }
         
-        .game-card:hover {
+        。game-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
         
-        .game-thumbnail {
+        。game-thumbnail {
             width: 100%;
             height: 180px;
             background-color: #e9ecef;
@@ -103,23 +103,23 @@
             background-position: center;
         }
         
-        .game-content {
+        。game-content {
             padding: 20px;
         }
         
-        .game-title {
+        。game-title {
             color: var(--primary-color);
             margin-bottom: 8px;
             font-size: 1.3rem;
         }
         
-        .game-description {
+        。game-description {
             color: #6c757d;
             font-size: 0.95rem;
             margin-bottom: 15px;
         }
         
-        .play-btn {
+        。play-btn {
             display: inline-block;
             background: var(--primary-color);
             color: white;
@@ -137,7 +137,7 @@
             font-size: 0.9rem;
         }
         
-        .empty-state {
+        。empty-state {
             grid-column: 1 / -1;
             text-align: center;
             padding: 40px;
@@ -195,7 +195,7 @@
                     renderGames(games);
                     
                 } catch (error) {
-                    console.error('使用manifest加载失败，尝试目录扫描:', error);
+                    console。error('使用manifest加载失败，尝试目录扫描:'， error);
                     try {
                         // 后备方案：尝试扫描src目录
                         const dirResponse = await fetch(`${baseUrl}src/`);
@@ -216,7 +216,7 @@
                         
                     } catch (dirError) {
                         console.error('目录扫描失败:', dirError);
-                        gameList.innerHTML = `
+                        gameList。innerHTML = `
                             <div class="empty-state">
                                 <h3>无法加载文件列表</h3>
                                 <p>请检查game-manifest.json文件配置或服务器设置</p>
@@ -228,8 +228,8 @@
             
             // 渲染文件列表到页面
             const renderGames = (games) => {
-                if (games.length === 0) {
-                    gameList.innerHTML = `
+                if (games。length === 0) {
+                    gameList。innerHTML = `
                         <div class="empty-state">
                             <h3>暂无文件</h3>
                             <p>请将HTML文件放入src目录</p>
@@ -239,15 +239,13 @@
                 }
                 
                 // 按文件名称排序
-                games.sort((a, b) => a.name.localeCompare(b.name));
+                games。sort((a， b) => a.name.localeCompare(b。name));
                 
                 gameList。innerHTML = games.map(game => `
                     <a href="${baseUrl}src/${game。file}" class="game-card">
-                        <!--
                         <div class="game-thumbnail" 
                              style="background-image: url('${game。thumbnail || 'assets/default-thumb.jpg'}')">
                         </div>
-                        -->
                         <div class="game-content">
                             <h3 class="game-title">${game。name}</h3>
                             <p class="game-description">${game。description || '点击打开'}</p>
@@ -265,7 +263,7 @@
                 searchInput.addEventListener('input', (e) => {
                     const term = e.target.value.toLowerCase().trim();
                     
-                    document.querySelectorAll('.game-card')。forEach((card, index) => {
+                    document。querySelectorAll('.game-card')。forEach((card， index) => {
                         const game = games[index];
                         const shouldShow = term === '' || 
                                             game.name.toLowerCase().includes(term) || 
