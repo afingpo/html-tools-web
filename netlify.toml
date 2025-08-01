@@ -1,9 +1,0 @@
-[[redirects]]
-  from = "/src/*"
-  to = "/src/:splat"
-  status = 200
-  force = false
-  headers = {Access-Control-Allow-Origin = "*"}
-
-[[plugins]]
-  package = "netlify-plugin-directory-listing"
