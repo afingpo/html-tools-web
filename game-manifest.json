@@ -3,5 +3,10 @@
         "name": "3D模拟飞行",
         "file": "3D-flight.html",
         "description": "基于scratch的3D模拟飞行引擎"
+    },
+    {
+        "name": "3D斯诺克台球",
+        "file": "snooker/index.html",
+        "description": "来自Blue-Flag-666/Snooker"
     }
 ]
